@@ -1,4 +1,7 @@
+#include "DigitalIn.h"
+#include "PinNames.h"
 #include "uop_msb.h"
+#include <cstdio>
 #include <iostream>
 using namespace uop_msb;
 
@@ -12,6 +15,8 @@ DigitalOut led3(LED3);
  
 //On board switch
 DigitalIn BlueButton(USER_BUTTON);
+DigitalIn Button1(BTN1_PIN);
+DigitalIn Button3(BTN3_PIN);
 
 //LCD Display
 LCD_16X2_DISPLAY disp;
@@ -47,10 +52,10 @@ int main()
     // UNCOMMENT THIS TO TEST YOUR BOARD
     // UOP_MSB_TEST board;
     // board.test();
+    //buzz.playTone("A", Buzzer::MIDDLE_OCTAVE);
 
     //LCD Backlight ON
     backLight = 1;
-
     // Initial display
     disp.cls();
     disp.locate(0,0);
@@ -71,33 +76,151 @@ int main()
     }
 
     wait_us(2000000); 
+    float PThreshold = 45.0;
+    float NThreshold = -45.0;
 
     while (true) {
-        
 
         // TEST MEMS SENSORS
         disp.cls();
         disp.locate(0,0);
         disp.printf("Testing MEMS");
 
+        Timer tmr;
+        tmr.start();
+        long long tprev;
+        tprev = tprev - tmr.elapsed_time().count();
+
         for (uint16_t n = 0; n<20; n++) {
+            //double meanV = 0.005;   
+
+
+            long prevgyrx = 0;
+            long prevgyry = 0;
+            long prevgyrz = 0;
+            float correctgyrx;
+            float correctgyry;
+            float correctgyrz;
+            float previntegratedGyrx = 0;
+            float previntegratedGyry = 0;
+            float previntegratedGyrz = 0;
+
+
+
+
+
+            
+            
             Motion_t acc   = motion.getAcceleration();   
-            Motion_t gyr   = motion.getGyro();             
+            Motion_t gyr   = motion.getGyro(); 
 
             //Temperature of sensor
             float tempMems = motion.getTemperatureC();  
+            // to get delta T
+            long long tNow = tmr.elapsed_time().count();
+            long long deltaT = tNow - tprev;
+            tprev = tNow;
+            //printf("T = %lld\n", deltaT);
+            long long deltaTs = (deltaT) * (1e-6) ; // to change from uS to Seconds
+            
+            // finding the avergae of the measured angular velocities
+            float newgyrx = (( gyr.x + prevgyrx )/2); // the initial prev measurements are zeros
+            float newgyry = (( gyr.y + prevgyry )/2);
+            float newgyrz = (( gyr.z + prevgyrz )/2);
 
+            // Subtracting the mean values from the measurements
+            correctgyrx = (gyr.x - newgyrx) ;
+            correctgyry = (gyr.y - newgyry);
+            correctgyrz = (gyr.z - newgyrz);
+
+            // numerically integratting to avoid the drift
+            float integratedgyrx = (correctgyrx * deltaTs); 
+            float newgyrx1 = integratedgyrx + previntegratedGyrx;
+            float integratedgyry = (correctgyry * deltaTs); 
+            float newgyry1 = integratedgyry + previntegratedGyry;
+            float integratedgyrz = (correctgyrz * deltaTs); 
+            float newgyrz1 = integratedgyrz + previntegratedGyrz;
+            // newgyr1 x, y, z are the angles taht being called pitch, roll and yaw.
+
+            // assigning the angular velocities and the integrated values measured and calculated in this loop into (( prevgyr )) and (( previntegratedGyrx, x, y, z)) so they can be used in the next loop in order to keep the integration process running with less errors.
+                 prevgyrx = gyr.x;
+                 prevgyry = gyr.y;
+                 prevgyrz = gyr.z;
+
+            previntegratedGyrx = integratedgyrx;
+            previntegratedGyry = integratedgyry;
+            previntegratedGyry = integratedgyrz;
+
+
+            if ( newgyrx1 > PThreshold) {
+                        buzz.playTone("A", Buzzer::MIDDLE_OCTAVE);
+                        wait_us(100000);
+                        }
+
+                        if (newgyrx1 < 42.0) {
+                        buzz.rest();
+                        wait_us(100000);
+                        }
+
+                        if ( newgyrx1 < NThreshold) {
+                        buzz.playTone("A", Buzzer::MIDDLE_OCTAVE);
+                        wait_us(100000);
+                        }  
+
+                        if (newgyrx1> -42.0) {
+                        buzz.rest();
+                        wait_us(100000);
+                        }
+            if ( newgyry1 > PThreshold) {
+                        buzz.playTone("A", Buzzer::MIDDLE_OCTAVE);
+                        wait_us(100000);
+                        }
+
+                        if (newgyry1 < 42.0) {
+                        buzz.rest();
+                        wait_us(100000);
+                        }
+
+                        if (newgyry1 < NThreshold) {
+                        buzz.playTone("A", Buzzer::MIDDLE_OCTAVE);
+                        wait_us(100000);
+                        }  
+
+                        if (newgyry1 > -42.0) {
+                        buzz.rest();
+                        wait_us(100000);
+                        }
+                        
             //Display sensor values
-            printf("%8.3f,\t%8.3f,\t%8.3f,\t", acc.x, acc.y, acc.z); 
-            printf("%8.3f,\t%8.3f,\t%8.3f,\t", gyr.x, gyr.y, gyr.z);         
+            printf("%8.3f,\t%8.3f,\t%8.3f,\t", acc.x , acc.y, acc.z); 
+            printf("\n"); 
+            printf("%8.3f,\t%8.3f,\t%8.3f,\t", newgyrx1, newgyrz1, newgyry1);
+            printf("\n");      
             printf("%8.3f\n",             tempMems); 
+            printf("\n"); 
+            wait_us(1000000);  
+
+            if (Button1 == 1 ) {
+            ++PThreshold;
+            ++NThreshold;
+            }
+            if (Button3 == 1 ) {
+            --PThreshold;
+            --NThreshold;
+            }
+
+
+
+                printf("%8.1f\n", PThreshold);
+                printf("%8.1f\n", NThreshold);
+
+
         
-            //Loop time is influenced by the following
-            wait_us(500000);             
         }
 
-        // TEST ENV SENSOR
-        disp.cls();
+
+    // TEST ENV SENSOR
+/*        disp.cls();
         disp.locate(0,0);
         disp.printf("Testing:");
         disp.locate(1,0);
@@ -120,8 +243,9 @@ int main()
         disp.locate(1,0);
         disp.printf("    %d %d %d %d\n", dipSwitches[0], dipSwitches[1], dipSwitches[2], dipSwitches[3]);
         wait_us(3000000);
-        #endif        
-
+        #endif      
+         
+*/
     }
 }
 
