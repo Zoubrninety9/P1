@@ -231,7 +231,7 @@ int main()
             if (Button2 == 1 ) {
                     ++Beta;
                     disp.cls();
-                    disp.locate(0,-1);
+                    disp.locate(1,-1);
                     disp.printf("%8.1f", Beta);
                     wait_us(500000);
                     disp.cls();
@@ -239,7 +239,7 @@ int main()
             if (Button4 == 1 ) {
                     --Beta;
                     disp.cls();
-                    disp.locate(0, -1);
+                    disp.locate(1, -1);
                     disp.printf("%8.1f", Beta);
                     wait_us(500000);
                     disp.cls();
