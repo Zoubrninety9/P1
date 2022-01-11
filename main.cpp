@@ -54,7 +54,6 @@ int main()
     // UNCOMMENT THIS TO TEST YOUR BOARD
     // UOP_MSB_TEST board;
     // board.test();
-    //buzz.playTone("A", Buzzer::MIDDLE_OCTAVE);
 
     //LCD Backlight ON
     backLight = 1;
