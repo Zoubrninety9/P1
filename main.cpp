@@ -94,10 +94,7 @@ int main()
         long long tprev;
         tprev = tprev - tmr.elapsed_time().count();
 
-        for (uint16_t n = 0; n<20; n++) {
-            //double meanV = 0.005;   
-
-
+        for (uint16_t n = 0; n<20; n++) {  
             long prevgyrx = 0;
             long prevgyry = 0;
             long prevgyrz = 0;
@@ -107,9 +104,11 @@ int main()
             float previntegratedGyrx = 0;
             float previntegratedGyry = 0;
             float previntegratedGyrz = 0;
-            
+
+            // to get the measurements (angular velocity + acceleration)
             Motion_t acc   = motion.getAcceleration();   
             Motion_t gyr   = motion.getGyro(); 
+
             //Temperature of sensor
             float tempMems = motion.getTemperatureC();  
 
@@ -244,7 +243,7 @@ int main()
 
 
     // TEST ENV SENSOR
-/*        disp.cls();
+      disp.cls();
         disp.locate(0,0);
         disp.printf("Testing:");
         disp.locate(1,0);
@@ -269,7 +268,7 @@ int main()
         wait_us(3000000);
         #endif      
          
-*/
+
     }
 }
 
