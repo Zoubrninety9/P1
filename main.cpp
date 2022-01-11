@@ -151,7 +151,8 @@ int main()
             previntegratedGyry = integratedgyry;
             previntegratedGyry = integratedgyrz;
 
-
+            // if the rotation was over the threshold angles, the MSB will sound the buzzer. 
+            // ( Note for Project Mates , the code below shaould also be useful with task 5 of the project as both the 4th and 5th have the same concepts of requirements ) //
             if ( newgyrx1 > PThreshold) {
                         buzz.playTone("A", Buzzer::MIDDLE_OCTAVE);
                         wait_us(100000);
@@ -197,25 +198,30 @@ int main()
             printf("%8.3f,\t%8.3f,\t%8.3f,\t", newgyrx1, newgyrz1, newgyry1);
             printf("\n");      
             printf("%8.3f\n",             tempMems); 
-            printf("\n"); 
-            wait_us(1000000);  
+            printf("\n");  
 
+            // if Button 3 "A" is pressed it will increase the threshold angle by 1 degrees. However if Button 3 "C" is pressed it will it by one degrees.
             if (Button1 == 1 ) {
-            ++PThreshold;
-            ++NThreshold;
+                    ++PThreshold;
+                    ++NThreshold;
+                    disp.cls();
+                    disp.locate(0,-1);
+                    disp.printf("%8.1f", PThreshold);
+                    disp.printf("%8.1f", NThreshold);
+                    wait_us(500000);
+                    disp.cls();
             }
             if (Button3 == 1 ) {
-            --PThreshold;
-            --NThreshold;
-            }
-
-
-
-                printf("%8.1f\n", PThreshold);
-                printf("%8.1f\n", NThreshold);
-
-
-        
+                    --PThreshold;
+                    --NThreshold;
+                    disp.cls();
+                    disp.locate(0, -1);
+                    disp.printf("%8.1f", PThreshold);
+                    disp.printf("%8.1f", NThreshold);
+                    wait_us(500000);
+                    disp.cls();
+            }      
+            wait_us(1000000); 
         }
 
 
