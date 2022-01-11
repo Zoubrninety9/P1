@@ -16,7 +16,9 @@ DigitalOut led3(LED3);
 //On board switch
 DigitalIn BlueButton(USER_BUTTON);
 DigitalIn Button1(BTN1_PIN);
+DigitalIn Button2(BTN2_PIN);
 DigitalIn Button3(BTN3_PIN);
+DigitalIn Button4(BTN4_PIN);
 
 //LCD Display
 LCD_16X2_DISPLAY disp;
@@ -104,6 +106,7 @@ int main()
             float previntegratedGyrx = 0;
             float previntegratedGyry = 0;
             float previntegratedGyrz = 0;
+            float Beta; // Note for Project Mates this should be used for task 5.
 
 
 
@@ -223,6 +226,24 @@ int main()
                     wait_us(500000);
                     disp.cls();
             }      
+
+            // the code below should be used for task 5.
+            if (Button2 == 1 ) {
+                    ++Beta;
+                    disp.cls();
+                    disp.locate(0,-1);
+                    disp.printf("%8.1f", Beta);
+                    wait_us(500000);
+                    disp.cls();
+            }
+            if (Button4 == 1 ) {
+                    --Beta;
+                    disp.cls();
+                    disp.locate(0, -1);
+                    disp.printf("%8.1f", Beta);
+                    wait_us(500000);
+                    disp.cls();
+            }   
             wait_us(1000000); 
         }
 
