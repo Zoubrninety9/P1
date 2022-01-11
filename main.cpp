@@ -80,6 +80,7 @@ int main()
     wait_us(2000000); 
     float PThreshold = 45.0;
     float NThreshold = -45.0;
+    float Beta; // Note for Project Mates this should be used for task 5.
 
     while (true) {
 
@@ -106,19 +107,13 @@ int main()
             float previntegratedGyrx = 0;
             float previntegratedGyry = 0;
             float previntegratedGyrz = 0;
-            float Beta; // Note for Project Mates this should be used for task 5.
-
-
-
-
-
-            
             
             Motion_t acc   = motion.getAcceleration();   
             Motion_t gyr   = motion.getGyro(); 
-
             //Temperature of sensor
             float tempMems = motion.getTemperatureC();  
+
+
             // to get delta T
             long long tNow = tmr.elapsed_time().count();
             long long deltaT = tNow - tprev;
