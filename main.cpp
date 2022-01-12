@@ -97,9 +97,9 @@ int main()
             long prevgyrx = 0;
             long prevgyry = 0;
             long prevgyrz = 0;
-            float correctgyrx;
-            float correctgyry;
-            float correctgyrz;
+            float OmegaAverageOfgyrx;
+            float OmegaAverageOfgyry;
+            float OmegaAverageOfgyrz;
             float previntegratedGyrx = 0;
             float previntegratedGyry = 0;
             float previntegratedGyrz = 0;
@@ -125,18 +125,18 @@ int main()
             float newgyrz = (( gyr.z + prevgyrz )/2);
 
             // Subtracting the mean values from the measurements
-            correctgyrx = (gyr.x - newgyrx) ;
-            correctgyry = (gyr.y - newgyry);
-            correctgyrz = (gyr.z - newgyrz);
+            OmegaAverageOfgyrx = (gyr.x - newgyrx) ;
+            OmegaAverageOfgyry = (gyr.y - newgyry);
+            OmegaAverageOfgyrz = (gyr.z - newgyrz);
 
             // numerically integratting to avoid the drift
-            float integratedgyrx = (correctgyrx * deltaTs); 
+            float integratedgyrx = (OmegaAverageOfgyrx * deltaTs); // dtheta = (w "omega" * dt )
             float newgyrx1 = integratedgyrx + previntegratedGyrx;
-            float integratedgyry = (correctgyry * deltaTs); 
+            float integratedgyry = (OmegaAverageOfgyry * deltaTs); 
             float newgyry1 = integratedgyry + previntegratedGyry;
-            float integratedgyrz = (correctgyrz * deltaTs); 
+            float integratedgyrz = (OmegaAverageOfgyrz * deltaTs); 
             float newgyrz1 = integratedgyrz + previntegratedGyrz;
-            // newgyr1 x, y, z are the angles taht being called pitch, roll and yaw.
+            // integratedgyr x, y, z are the angles called pitch, roll and yaw, (thata).
 
             // assigning the angular velocities and the integrated values measured and calculated in this loop into (( prevgyr )) and (( previntegratedGyrx, x, y, z)) so they can be used in the next loop in order to keep the integration process running with less errors.
                  prevgyrx = gyr.x;
@@ -150,41 +150,41 @@ int main()
             // if the rotation was over the threshold angles, the MSB will sound the buzzer. 
             if ( newgyrx1 > PThreshold) {
                         buzz.playTone("A", Buzzer::MIDDLE_OCTAVE);
-                        wait_us(100000);
+                        wait_us(80000);
                         }
 
                         if (newgyrx1 < 42.0) {
                         buzz.rest();
-                        wait_us(100000);
+                        wait_us(80000);
                         }
 
                         if ( newgyrx1 < NThreshold) {
                         buzz.playTone("A", Buzzer::MIDDLE_OCTAVE);
-                        wait_us(100000);
+                        wait_us(80000);
                         }  
 
                         if (newgyrx1> -42.0) {
                         buzz.rest();
-                        wait_us(100000);
+                        wait_us(80000);
                         }
             if ( newgyry1 > PThreshold) {
                         buzz.playTone("A", Buzzer::MIDDLE_OCTAVE);
-                        wait_us(100000);
+                        wait_us(80000);
                         }
 
                         if (newgyry1 < 42.0) {
                         buzz.rest();
-                        wait_us(100000);
+                        wait_us(80000);
                         }
 
                         if (newgyry1 < NThreshold) {
                         buzz.playTone("A", Buzzer::MIDDLE_OCTAVE);
-                        wait_us(100000);
+                        wait_us(80000);
                         }  
 
                         if (newgyry1 > -42.0) {
                         buzz.rest();
-                        wait_us(100000);
+                        wait_us(80000);
                         }
                         
             //Display sensor values
@@ -242,7 +242,7 @@ int main()
 
 
     // TEST ENV SENSOR
-      disp.cls();
+   /*   disp.cls();
         disp.locate(0,0);
         disp.printf("Testing:");
         disp.locate(1,0);
@@ -266,7 +266,7 @@ int main()
         disp.printf("    %d %d %d %d\n", dipSwitches[0], dipSwitches[1], dipSwitches[2], dipSwitches[3]);
         wait_us(3000000);
         #endif      
-         
+         */
 
     }
 }
