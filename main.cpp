@@ -93,16 +93,18 @@ int main()
         long long tprev;
         tprev = tprev - tmr.elapsed_time().count();
 
-        for (uint16_t n = 0; n<20; n++) {  
             long prevgyrx = 0;
             long prevgyry = 0;
             long prevgyrz = 0;
-            float OmegaAverageOfgyrx;
-            float OmegaAverageOfgyry;
-            float OmegaAverageOfgyrz;
             float previntegratedGyrx = 0;
             float previntegratedGyry = 0;
             float previntegratedGyrz = 0;
+
+        for (uint16_t n = 0; n<20; n++) {  
+
+            float OmegaAverageOfgyrx;
+            float OmegaAverageOfgyry;
+            float OmegaAverageOfgyrz;
 
             // to get the measurements (angular velocity + acceleration)
             Motion_t acc   = motion.getAcceleration();   
@@ -194,6 +196,7 @@ int main()
             printf("\n");      
             printf("%8.3f\n",             tempMems); 
             printf("\n");  
+            
 
 
             // if Button 3 "A" is pressed it will increase the threshold angle by 1 degrees. However if Button 3 "C" is pressed it will it by one degrees.
